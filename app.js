@@ -1,40 +1,38 @@
-// 頂大男女在學人數趨勢分析 - 主應用程式邏輯
+// Taiwan Universities Gender Statistics - Main Application
 
 let chart = null;
 
-// 初始化
+// Initialize
 document.addEventListener('DOMContentLoaded', function() {
     initializeSelects();
     bindEvents();
     updateChart();
 });
 
-// 初始化下拉選單
+// Initialize dropdown menus
 function initializeSelects() {
     const universitySelect = document.getElementById('university');
     
-    // 加入大學選項
     for (const uniKey in UNIVERSITY_DATA.universities) {
         const uni = UNIVERSITY_DATA.universities[uniKey];
         const option = document.createElement('option');
         option.value = uniKey;
-        option.textContent = uni.name;
+        option.textContent = uni.name + ' (' + uni.shortName + ')';
         universitySelect.appendChild(option);
     }
     
     updateCollegeOptions();
 }
 
-// 更新學院下拉選單
+// Update college dropdown
 function updateCollegeOptions() {
     const universitySelect = document.getElementById('university');
     const collegeSelect = document.getElementById('college');
     const selectedUni = universitySelect.value;
     
-    collegeSelect.innerHTML = '<option value="all">全部學院</option>';
+    collegeSelect.innerHTML = '<option value="all">All Colleges</option>';
     
     if (selectedUni === 'all') {
-        // 顯示所有大學的所有學院
         for (const uniKey in UNIVERSITY_DATA.universities) {
             const uni = UNIVERSITY_DATA.universities[uniKey];
             for (const collegeKey in uni.colleges) {
@@ -45,7 +43,6 @@ function updateCollegeOptions() {
             }
         }
     } else {
-        // 只顯示選定大學的學院
         const uni = UNIVERSITY_DATA.universities[selectedUni];
         for (const collegeKey in uni.colleges) {
             const option = document.createElement('option');
@@ -58,7 +55,7 @@ function updateCollegeOptions() {
     updateDepartmentOptions();
 }
 
-// 更新系所下拉選單
+// Update department dropdown
 function updateDepartmentOptions() {
     const universitySelect = document.getElementById('university');
     const collegeSelect = document.getElementById('college');
@@ -67,10 +64,9 @@ function updateDepartmentOptions() {
     const selectedUni = universitySelect.value;
     const selectedCollege = collegeSelect.value;
     
-    departmentSelect.innerHTML = '<option value="all">全部系所</option>';
+    departmentSelect.innerHTML = '<option value="all">All Departments</option>';
     
     if (selectedCollege === 'all') {
-        // 根據大學選擇顯示系所
         const unisToProcess = selectedUni === 'all' 
             ? Object.keys(UNIVERSITY_DATA.universities) 
             : [selectedUni];
@@ -88,7 +84,6 @@ function updateDepartmentOptions() {
             }
         }
     } else {
-        // 只顯示選定學院的系所
         const [uniKey, collegeKey] = selectedCollege.split('|');
         const uni = UNIVERSITY_DATA.universities[uniKey];
         const college = uni.colleges[collegeKey];
@@ -102,7 +97,7 @@ function updateDepartmentOptions() {
     }
 }
 
-// 綁定事件
+// Bind events
 function bindEvents() {
     document.getElementById('dataType').addEventListener('change', updateChart);
     
@@ -120,15 +115,13 @@ function bindEvents() {
     document.getElementById('level').addEventListener('change', updateChart);
 }
 
-// 計算選定條件的數據
-function calculateData() {
-    const dataTypeSelect = document.getElementById('dataType');
+// Calculate data for selected filters
+function calculateData(dataType) {
     const universitySelect = document.getElementById('university');
     const collegeSelect = document.getElementById('college');
     const departmentSelect = document.getElementById('department');
     const levelSelect = document.getElementById('level');
     
-    const selectedDataType = dataTypeSelect.value; // 'enrolled' or 'freshman'
     const selectedUni = universitySelect.value;
     const selectedCollege = collegeSelect.value;
     const selectedDept = departmentSelect.value;
@@ -138,7 +131,6 @@ function calculateData() {
     const maleData = new Array(years.length).fill(0);
     const femaleData = new Array(years.length).fill(0);
     
-    // 取得要處理的大學
     const unisToProcess = selectedUni === 'all' 
         ? Object.keys(UNIVERSITY_DATA.universities) 
         : [selectedUni];
@@ -146,7 +138,6 @@ function calculateData() {
     for (const uniKey of unisToProcess) {
         const uni = UNIVERSITY_DATA.universities[uniKey];
         
-        // 取得要處理的學院
         let collegesToProcess = [];
         if (selectedCollege === 'all') {
             collegesToProcess = Object.keys(uni.colleges).map(c => [uniKey, c]);
@@ -162,7 +153,6 @@ function calculateData() {
             const college = uni.colleges[collegeKey];
             if (!college) continue;
             
-            // 取得要處理的系所
             let deptsToProcess = [];
             if (selectedDept === 'all') {
                 deptsToProcess = Object.keys(college.departments);
@@ -182,8 +172,8 @@ function calculateData() {
                     : [selectedLevel];
                 
                 for (const level of levels) {
-                    if (dept[level] && dept[level][selectedDataType]) {
-                        const data = dept[level][selectedDataType];
+                    if (dept[level] && dept[level][dataType]) {
+                        const data = dept[level][dataType];
                         for (let i = 0; i < years.length; i++) {
                             maleData[i] += data.male[i] || 0;
                             femaleData[i] += data.female[i] || 0;
@@ -197,7 +187,7 @@ function calculateData() {
     return { years, maleData, femaleData };
 }
 
-// 計算百分比
+// Calculate percentages
 function calculatePercentages(maleData, femaleData) {
     const malePercent = [];
     const femalePercent = [];
@@ -216,37 +206,34 @@ function calculatePercentages(maleData, femaleData) {
     return { malePercent, femalePercent };
 }
 
-// 更新統計卡片
+// Update stats cards
 function updateStatsCards(maleData, femaleData, malePercent, femalePercent) {
     const lastIndex = maleData.length - 1;
     const firstIndex = 0;
     
-    // 最新年度男性比例
     document.getElementById('malePercent').textContent = malePercent[lastIndex] + '%';
-    document.getElementById('maleCount').textContent = `${maleData[lastIndex].toLocaleString()} 人`;
+    document.getElementById('maleCount').textContent = `${maleData[lastIndex].toLocaleString()} students`;
     
-    // 最新年度女性比例
     document.getElementById('femalePercent').textContent = femalePercent[lastIndex] + '%';
-    document.getElementById('femaleCount').textContent = `${femaleData[lastIndex].toLocaleString()} 人`;
+    document.getElementById('femaleCount').textContent = `${femaleData[lastIndex].toLocaleString()} students`;
     
-    // 十年女性比例變化
     const femaleTrend = (parseFloat(femalePercent[lastIndex]) - parseFloat(femalePercent[firstIndex])).toFixed(1);
     const trendSign = femaleTrend >= 0 ? '+' : '';
     document.getElementById('trendValue').textContent = `${trendSign}${femaleTrend}%`;
     
     if (femaleTrend > 0) {
-        document.getElementById('trendDesc').textContent = '女性比例上升';
+        document.getElementById('trendDesc').textContent = 'Female ratio increased';
         document.getElementById('trendValue').style.color = '#FF6384';
     } else if (femaleTrend < 0) {
-        document.getElementById('trendDesc').textContent = '女性比例下降';
+        document.getElementById('trendDesc').textContent = 'Female ratio decreased';
         document.getElementById('trendValue').style.color = '#36A2EB';
     } else {
-        document.getElementById('trendDesc').textContent = '比例維持穩定';
+        document.getElementById('trendDesc').textContent = 'Ratio remained stable';
         document.getElementById('trendValue').style.color = '#4BC0C0';
     }
 }
 
-// 更新原始數據表格
+// Update raw data table
 function updateRawDataTable(years, maleData, femaleData, malePercent, femalePercent) {
     const tbody = document.getElementById('rawDataBody');
     tbody.innerHTML = '';
@@ -266,7 +253,7 @@ function updateRawDataTable(years, maleData, femaleData, malePercent, femalePerc
     }
 }
 
-// 取得圖表標題
+// Get chart title
 function getChartTitle() {
     const dataTypeSelect = document.getElementById('dataType');
     const universitySelect = document.getElementById('university');
@@ -277,7 +264,7 @@ function getChartTitle() {
     let title = '';
     
     if (universitySelect.value === 'all') {
-        title = '頂大';
+        title = 'All Universities';
     } else {
         title = UNIVERSITY_DATA.universities[universitySelect.value].shortName;
     }
@@ -295,29 +282,27 @@ function getChartTitle() {
     }
     
     const levelMap = {
-        'all': '全部學制',
-        'bachelor': '學士班',
-        'master': '碩士班',
-        'phd': '博士班'
+        'all': 'All Levels',
+        'bachelor': 'Bachelor',
+        'master': 'Master',
+        'phd': 'PhD'
     };
-    title += ' ' + levelMap[levelSelect.value];
+    title += ' - ' + levelMap[levelSelect.value];
     
     const dataTypeMap = {
-        'enrolled': '在學人數',
-        'freshman': '當年度新生'
+        'enrolled': 'Enrolled Students',
+        'freshman': 'Freshmen',
+        'compare': 'Enrolled vs Freshmen'
     };
-    title += ' ' + dataTypeMap[dataTypeSelect.value];
+    title += ' - ' + dataTypeMap[dataTypeSelect.value];
     
-    return title + ' 男女比例趨勢';
+    return title + ' - Gender Ratio Trends';
 }
 
-// 更新圖表
+// Update chart
 function updateChart() {
-    const { years, maleData, femaleData } = calculateData();
-    const { malePercent, femalePercent } = calculatePercentages(maleData, femaleData);
-    
-    updateStatsCards(maleData, femaleData, malePercent, femalePercent);
-    updateRawDataTable(years, maleData, femaleData, malePercent, femalePercent);
+    const dataTypeSelect = document.getElementById('dataType');
+    const selectedDataType = dataTypeSelect.value;
     
     const ctx = document.getElementById('genderChart').getContext('2d');
     
@@ -325,129 +310,208 @@ function updateChart() {
         chart.destroy();
     }
     
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: years,
-            datasets: [
-                {
-                    label: '男性比例 (%)',
-                    data: malePercent,
-                    borderColor: '#36A2EB',
-                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    pointBackgroundColor: '#36A2EB',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2
-                },
-                {
-                    label: '女性比例 (%)',
-                    data: femalePercent,
-                    borderColor: '#FF6384',
-                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    pointBackgroundColor: '#FF6384',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                intersect: false,
-                mode: 'index'
+    if (selectedDataType === 'compare') {
+        // Compare mode: show both enrolled and freshman
+        const enrolledData = calculateData('enrolled');
+        const freshmanData = calculateData('freshman');
+        const enrolledPercent = calculatePercentages(enrolledData.maleData, enrolledData.femaleData);
+        const freshmanPercent = calculatePercentages(freshmanData.maleData, freshmanData.femaleData);
+        
+        // Use enrolled data for stats cards
+        updateStatsCards(enrolledData.maleData, enrolledData.femaleData, enrolledPercent.malePercent, enrolledPercent.femalePercent);
+        updateRawDataTable(enrolledData.years, enrolledData.maleData, enrolledData.femaleData, enrolledPercent.malePercent, enrolledPercent.femalePercent);
+        
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: UNIVERSITY_DATA.years,
+                datasets: [
+                    {
+                        label: 'Enrolled - Female %',
+                        data: enrolledPercent.femalePercent,
+                        borderColor: '#FF6384',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#FF6384',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: 'Freshmen - Female %',
+                        data: freshmanPercent.femalePercent,
+                        borderColor: '#FF9F40',
+                        backgroundColor: 'rgba(255, 159, 64, 0.1)',
+                        borderWidth: 3,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#FF9F40',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: 'Enrolled - Male %',
+                        data: enrolledPercent.malePercent,
+                        borderColor: '#36A2EB',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#36A2EB',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: 'Freshmen - Male %',
+                        data: freshmanPercent.malePercent,
+                        borderColor: '#4BC0C0',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        borderWidth: 3,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#4BC0C0',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }
+                ]
             },
-            plugins: {
+            options: getChartOptions(enrolledData.maleData, enrolledData.femaleData)
+        });
+    } else {
+        // Single mode: enrolled or freshman
+        const { years, maleData, femaleData } = calculateData(selectedDataType);
+        const { malePercent, femalePercent } = calculatePercentages(maleData, femaleData);
+        
+        updateStatsCards(maleData, femaleData, malePercent, femalePercent);
+        updateRawDataTable(years, maleData, femaleData, malePercent, femalePercent);
+        
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: 'Male %',
+                        data: malePercent,
+                        borderColor: '#36A2EB',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#36A2EB',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: 'Female %',
+                        data: femalePercent,
+                        borderColor: '#FF6384',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#FF6384',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }
+                ]
+            },
+            options: getChartOptions(maleData, femaleData)
+        });
+    }
+}
+
+// Get chart options
+function getChartOptions(maleData, femaleData) {
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        },
+        plugins: {
+            title: {
+                display: true,
+                text: getChartTitle(),
+                font: {
+                    size: 16,
+                    weight: 'bold'
+                },
+                padding: {
+                    bottom: 20
+                }
+            },
+            legend: {
+                position: 'top',
+                labels: {
+                    usePointStyle: true,
+                    padding: 20,
+                    font: {
+                        size: 12
+                    }
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                titleFont: {
+                    size: 14
+                },
+                bodyFont: {
+                    size: 13
+                },
+                padding: 12
+            }
+        },
+        scales: {
+            x: {
                 title: {
                     display: true,
-                    text: getChartTitle(),
+                    text: 'Year',
                     font: {
-                        size: 18,
+                        size: 14,
                         weight: 'bold'
-                    },
-                    padding: {
-                        bottom: 20
                     }
                 },
-                legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20,
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleFont: {
-                        size: 14
-                    },
-                    bodyFont: {
-                        size: 13
-                    },
-                    padding: 12,
-                    callbacks: {
-                        afterBody: function(context) {
-                            const index = context[0].dataIndex;
-                            const male = maleData[index];
-                            const female = femaleData[index];
-                            return [
-                                '',
-                                `男性人數: ${male.toLocaleString()} 人`,
-                                `女性人數: ${female.toLocaleString()} 人`,
-                                `總人數: ${(male + female).toLocaleString()} 人`
-                            ];
-                        }
-                    }
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
                 }
             },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: '年度',
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
+            y: {
+                title: {
+                    display: true,
+                    text: 'Percentage (%)',
+                    font: {
+                        size: 14,
+                        weight: 'bold'
                     }
                 },
-                y: {
-                    title: {
-                        display: true,
-                        text: '百分比 (%)',
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        }
-                    },
-                    min: 0,
-                    max: 100,
-                    ticks: {
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
+                min: 0,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + '%';
                     }
+                },
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
                 }
             }
         }
-    });
+    };
 }

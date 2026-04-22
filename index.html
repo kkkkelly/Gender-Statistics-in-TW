@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>頂大男女在學人數趨勢分析</title>
+    <title>Taiwan Universities Gender Statistics</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -265,44 +265,45 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎓 頂大男女在學人數趨勢分析</h1>
-            <p>台大、清大、陽明交大、政大 各系所性別比例十年趨勢 (2015-2024)</p>
+            <h1>🎓 Taiwan Universities Gender Statistics</h1>
+            <p>NTU, NTHU, NYCU, NCCU - 10-Year Gender Ratio Trends (2015-2024)</p>
         </header>
 
         <div class="controls">
             <div class="control-group">
                 <div class="control-item">
-                    <label for="dataType">統計類型</label>
+                    <label for="dataType">Statistics Type</label>
                     <select id="dataType">
-                        <option value="enrolled">在學人數</option>
-                        <option value="freshman">當年度新生</option>
+                        <option value="enrolled">Enrolled Students</option>
+                        <option value="freshman">Freshmen Only</option>
+                        <option value="compare">Compare Both</option>
                     </select>
                 </div>
                 <div class="control-item">
-                    <label for="university">大學</label>
+                    <label for="university">University</label>
                     <select id="university">
-                        <option value="all">全部大學</option>
+                        <option value="all">All Universities</option>
                     </select>
                 </div>
                 <div class="control-item">
-                    <label for="college">學院</label>
+                    <label for="college">College</label>
                     <select id="college">
-                        <option value="all">全部學院</option>
+                        <option value="all">All Colleges</option>
                     </select>
                 </div>
                 <div class="control-item">
-                    <label for="department">系所</label>
+                    <label for="department">Department</label>
                     <select id="department">
-                        <option value="all">全部系所</option>
+                        <option value="all">All Departments</option>
                     </select>
                 </div>
                 <div class="control-item">
-                    <label for="level">學制</label>
+                    <label for="level">Degree Level</label>
                     <select id="level">
-                        <option value="all">全部學制</option>
-                        <option value="bachelor">學士班</option>
-                        <option value="master">碩士班</option>
-                        <option value="phd">博士班</option>
+                        <option value="all">All Levels</option>
+                        <option value="bachelor">Bachelor</option>
+                        <option value="master">Master</option>
+                        <option value="phd">PhD</option>
                     </select>
                 </div>
             </div>
@@ -310,17 +311,17 @@
 
         <div class="stats-cards">
             <div class="stat-card male">
-                <h3>最新年度男性比例</h3>
+                <h3>Latest Year Male Ratio</h3>
                 <div class="value" id="malePercent">--</div>
                 <div class="subtext" id="maleCount">--</div>
             </div>
             <div class="stat-card female">
-                <h3>最新年度女性比例</h3>
+                <h3>Latest Year Female Ratio</h3>
                 <div class="value" id="femalePercent">--</div>
                 <div class="subtext" id="femaleCount">--</div>
             </div>
             <div class="stat-card trend">
-                <h3>十年女性比例變化</h3>
+                <h3>10-Year Female Ratio Change</h3>
                 <div class="value" id="trendValue">--</div>
                 <div class="subtext" id="trendDesc">--</div>
             </div>
@@ -333,16 +334,16 @@
         </div>
 
         <div class="raw-data">
-            <h3>📋 原始數據</h3>
+            <h3>📋 Raw Data</h3>
             <table id="rawDataTable">
                 <thead>
                     <tr>
-                        <th>年度</th>
-                        <th>男性人數</th>
-                        <th>女性人數</th>
-                        <th>總人數</th>
-                        <th>男性比例</th>
-                        <th>女性比例</th>
+                        <th>Year</th>
+                        <th>Male</th>
+                        <th>Female</th>
+                        <th>Total</th>
+                        <th>Male %</th>
+                        <th>Female %</th>
                     </tr>
                 </thead>
                 <tbody id="rawDataBody">
@@ -351,17 +352,17 @@
         </div>
 
         <div class="data-source">
-            <h3>📊 資料來源與說明</h3>
+            <h3>📊 Data Sources</h3>
             <p>
-                本圖表資料可從以下來源取得：<br>
-                • <a href="https://stats.moe.gov.tw/" target="_blank">教育部統計處</a> - 大專校院校務資訊公開<br>
-                • <a href="https://www.aca.ntu.edu.tw/" target="_blank">台大教務處</a> - 學生人數統計<br><br>
-                目前顯示為示範資料，您可以編輯 <code>data.js</code> 檔案來更新實際統計數據。
+                Data can be obtained from:<br>
+                • <a href="https://stats.moe.gov.tw/" target="_blank">Ministry of Education Statistics</a> - Higher Education Data<br>
+                • <a href="https://www.aca.ntu.edu.tw/" target="_blank">NTU Academic Affairs</a> - Student Statistics<br><br>
+                Currently showing sample data. Edit <code>data.js</code> to update with actual statistics.
             </p>
         </div>
 
         <footer>
-            <p>Side Project - 頂大男女在學人數統計 | 資料僅供參考</p>
+            <p>Taiwan Universities Gender Statistics | Data for reference only</p>
         </footer>
     </div>
 
