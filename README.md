@@ -1,77 +1,69 @@
-# 台大男女在學人數趨勢分析
+# Taiwan Universities Gender Statistics
 
-一個互動式網頁應用程式，用於視覺化國立臺灣大學各系所男女在學人數的十年趨勢變化。
+An interactive web application visualizing gender ratio trends across Taiwan's major universities over 10 years.
 
-## 功能特色
+## Features
 
-- 📊 **互動式圖表**：使用 Chart.js 繪製動態折線圖
-- 🎯 **多層篩選**：可依學院、系所、學制進行篩選
-- 📈 **即時統計**：顯示最新年度男女比例與十年變化趨勢
-- 💡 **詳細提示**：滑鼠懸停顯示詳細人數資訊
-- 📱 **響應式設計**：支援桌面與行動裝置
+- 📊 **Interactive Charts** - Dynamic line charts powered by Chart.js
+- 🎯 **Multi-level Filters** - Filter by university, college, department, and degree level
+- 📈 **Compare Mode** - Compare enrolled students vs freshmen on the same chart
+- 📋 **Raw Data Table** - View detailed numbers for each year
+- 💡 **Statistics Cards** - Quick overview of latest ratios and 10-year trends
+- 📱 **Responsive Design** - Works on desktop and mobile
 
-## 使用方式
+## Universities Included
 
-1. 直接用瀏覽器開啟 `index.html` 檔案
-2. 使用下拉選單選擇想要查看的：
-   - **學院**：選擇特定學院或全校
-   - **系所**：選擇特定系所或全部
-   - **學制**：學士班、碩士班、博士班或全部
+- **NTU** - National Taiwan University (台大)
+- **NTHU** - National Tsing Hua University (清大)
+- **NYCU** - National Yang Ming Chiao Tung University (陽明交大)
+- **NCCU** - National Chengchi University (政大)
 
-## 更新真實資料
+## Usage
 
-目前的資料為示範用途。若要使用真實統計數據，請編輯 `data.js` 檔案。
+1. Open `index.html` in a browser
+2. Use the dropdown menus to select:
+   - **Statistics Type** - Enrolled students, Freshmen only, or Compare both
+   - **University** - Select a specific university or all
+   - **College** - Filter by college
+   - **Department** - Filter by department
+   - **Degree Level** - Bachelor, Master, PhD, or all
 
-### 資料來源
+## Files
 
-1. **教育部統計處**
-   - 網址：https://stats.moe.gov.tw/
-   - 路徑：大專校院校務資訊公開 → 各校基本資訊 → 學生數
+```
+├── index.html    # Main page
+├── app.js        # Application logic
+├── data.js       # Data file (editable)
+└── README.md     # This file
+```
 
-2. **台大教務處**
-   - 網址：https://www.aca.ntu.edu.tw/
-   - 可查詢各學年度學生人數統計
+## Updating Data
 
-### 資料格式
+Edit `data.js` to update with real statistics. Data format:
 
 ```javascript
-"系所名稱": {
+"Department Name": {
     bachelor: { 
-        male: [年度1人數, 年度2人數, ...], 
-        female: [年度1人數, 年度2人數, ...] 
+        enrolled: { male: [...], female: [...] },
+        freshman: { male: [...], female: [...] }
     },
-    master: { 
-        male: [...], 
-        female: [...] 
-    },
-    phd: { 
-        male: [...], 
-        female: [...] 
-    }
+    master: { ... },
+    phd: { ... }
 }
 ```
 
-### 新增學院/系所
+## Data Sources
 
-在 `data.js` 的 `colleges` 物件中新增即可，格式參考現有資料。
+- [Ministry of Education Statistics](https://stats.moe.gov.tw/) - Higher Education Data
+- University Academic Affairs Offices - Student Statistics
 
-## 技術架構
+## Tech Stack
 
-- **HTML5** - 頁面結構
-- **CSS3** - 樣式與響應式設計
-- **JavaScript (ES6+)** - 應用邏輯
-- **Chart.js** - 圖表繪製 (透過 CDN 載入)
+- HTML5
+- CSS3
+- JavaScript (ES6+)
+- Chart.js (via CDN)
 
-## 檔案結構
+## License
 
-```
-ntu_gender_stats/
-├── index.html    # 主頁面
-├── data.js       # 資料檔案 (可編輯更新)
-├── app.js        # 應用程式邏輯
-└── README.md     # 說明文件
-```
-
-## 授權
-
-本專案為個人 side project，僅供學習與參考使用。
+MIT - Personal project for educational purposes.
